@@ -25,9 +25,13 @@ class DonutGraph extends StatelessWidget {
       child: CustomPaint(
         foregroundPainter: DonutGraphPainter(
           trackColor: trackColor,
-          completeColor: Colors.green,
+          completeColor: completedColor,
           completePercente: percentage,
           strokeWidth: 50
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Center(child: Text('${percentage.toInt()}', style: TextStyle(fontSize: 44),)),
         ),
       ),
     );
@@ -57,7 +61,7 @@ class DonutGraphPainter extends CustomPainter {
     
     final _completedLine = Paint()
       ..color = completeColor
-      ..strokeCap = StrokeCap.round
+      ..strokeCap = StrokeCap.butt
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
     
