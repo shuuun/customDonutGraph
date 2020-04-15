@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'donutGraph.dart';
 import 'dart:math';
+import 'dart:ui';
 
 class Home extends StatefulWidget {
 
@@ -8,9 +9,21 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with TickerProviderStateMixin {
 
-  final _percentage = ValueNotifier<double>(0);
+  AnimationController _controller;
+  final percentage = ValueNotifier<double>(0.0);
+  double randomPercentage = 0.0;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: Duration(seconds: 1))
+      ..addListener(() { 
+        percentage.value = lerpDouble(0, randomPercentage, _controller.value);
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +31,19 @@ class _HomeState extends State<Home> {
       appBar: AppBar(title: Text('Donut Graph')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _percentage.value = Random().nextInt(100).toDouble();
+          setState(() {
+            randomPercentage = Random().nextInt(100).toDouble();
+            _controller.forward(from: 0.0);
+          });
         },
         child: Icon(Icons.refresh),
       ),
       body: Center(
         child: ValueListenableBuilder(
-          valueListenable: _percentage,
+          valueListenable: percentage, 
           builder: (context, per, child) {
-            return DonutGraph(percentage: per, trackColor: Colors.grey[300], completedColor: Colors.cyan,);    
-          },
+            return DonutGraph(percentage: per, trackColor: Colors.grey[300], completedColor: Colors.cyan,);
+          }
         )
       ),
     );
